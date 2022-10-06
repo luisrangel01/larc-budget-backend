@@ -1,3 +1,5 @@
+/* eslint-disable hexagonal-architecture/enforce */
+
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 

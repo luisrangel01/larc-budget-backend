@@ -12,6 +12,8 @@
 // })
 // export class AppModule {}
 
+/* eslint-disable hexagonal-architecture/enforce */
+
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -20,6 +22,9 @@ import { AccountsModule } from './accounts/accounts.module';
 import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
 import { configValidationSchema } from './config.schema';
+
+import { AppController } from './app/app.controller';
+import { AppService } from './app/app.service';
 
 @Module({
   imports: [
@@ -53,5 +58,7 @@ import { configValidationSchema } from './config.schema';
     TasksModule,
     AuthModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
