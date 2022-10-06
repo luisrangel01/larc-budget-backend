@@ -1,7 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Task } from 'src/tasks/domain/task.entity';
-
 import { UserStatus } from './user.enums';
 
 @Entity()
