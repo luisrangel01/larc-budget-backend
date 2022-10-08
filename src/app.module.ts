@@ -23,8 +23,8 @@ import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
 import { configValidationSchema } from './config.schema';
 
-import { AppController } from './app/app.controller';
-import { AppService } from './app/app.service';
+import { AppController } from './app/infrastructure/app.controller';
+import { AppService } from './app/application/app.service';
 
 @Module({
   imports: [
