@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Task } from 'src/tasks/domain/task.entity';
 import { Account } from 'src/accounts/domain/account.entity';
 import { UserStatus } from './user.enums';
+import { AccountTransaction } from 'src/account-transactions/domain/account-transaction.entity';
 
 @Entity()
 export class User {
@@ -23,4 +24,11 @@ export class User {
 
   @OneToMany((_type) => Account, (account) => account.user, { eager: false })
   accounts: Account[];
+
+  @OneToMany(
+    (_type) => AccountTransaction,
+    (accountTransaction) => accountTransaction.user,
+    { eager: false },
+  )
+  accountTransactions: AccountTransaction[];
 }

@@ -4,11 +4,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   IsNull,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 import { User } from 'src/auth/domain/user.entity';
 import { AccountStatus } from './account.enums';
+import { AccountTransaction } from 'src/account-transactions/domain/account-transaction.entity';
 
 @Entity()
 export class Account {
@@ -39,10 +41,23 @@ export class Account {
   @Column({ nullable: true })
   paymentDate: number;
 
+  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  updatedAt: Date;
+
   @Column({ length: 20 })
   status: AccountStatus;
 
   @ManyToOne((_type) => User, (user) => user.accounts, { eager: false })
   @Exclude({ toPlainOnly: true })
   user: User;
+
+  @OneToMany(
+    (_type) => AccountTransaction,
+    (accountTransaction) => accountTransaction.account,
+    { eager: false },
+  )
+  accountTransactions: AccountTransaction[];
 }

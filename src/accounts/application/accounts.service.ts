@@ -23,7 +23,7 @@ export class AccountsService {
   }
 
   async getAccountById(user: User, id: string): Promise<Account> {
-    const found = await this.accountsRepositoryService.findOne({
+    const found = await this.accountsRepositoryService.getAccount({
       where: { id, user },
     });
     if (!found) {

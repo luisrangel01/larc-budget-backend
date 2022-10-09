@@ -28,7 +28,7 @@ export class AccountsRepositoryService {
     return this.dataSource.getRepository(Account);
   }
 
-  findOne(options: FindOneOptions<Account>) {
+  getAccount(options: FindOneOptions<Account>) {
     return this.dataSource.getRepository(Account).findOne(options);
   }
 
@@ -162,6 +162,7 @@ export class AccountsRepositoryService {
         ...(creditCardLimit ? { creditCardLimit: creditCardLimit } : {}),
         ...(cutOffDate ? { cutOffDate: cutOffDate } : {}),
         ...(paymentDate ? { paymentDate: paymentDate } : {}),
+        updatedAt: new Date(),
       })
       .where('userId = :userId', { userId: user.id })
       .andWhere('id = :id', { id: id })

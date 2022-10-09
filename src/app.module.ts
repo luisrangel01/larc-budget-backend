@@ -1,17 +1,3 @@
-// import { Module } from '@nestjs/common';
-// import { AppController } from './app/app.controller';
-// import { AppService } from './app/app.service';
-// import { AuthModule } from './auth/auth.module';
-// import { AccountsModule } from './accounts/accounts.module';
-// import { TasksModule } from './tasks/tasks.module';
-
-// @Module({
-//   imports: [AuthModule, AccountsModule, TasksModule],
-//   controllers: [AppController],
-//   providers: [AppService],
-// })
-// export class AppModule {}
-
 /* eslint-disable hexagonal-architecture/enforce */
 
 import { Module } from '@nestjs/common';
@@ -25,6 +11,7 @@ import { configValidationSchema } from './config.schema';
 
 import { AppController } from './app/infrastructure/app.controller';
 import { AppService } from './app/application/app.service';
+import { AccountTransactionsModule } from './account-transactions/account-transactions.module';
 
 @Module({
   imports: [
@@ -57,6 +44,7 @@ import { AppService } from './app/application/app.service';
     AccountsModule,
     TasksModule,
     AuthModule,
+    AccountTransactionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

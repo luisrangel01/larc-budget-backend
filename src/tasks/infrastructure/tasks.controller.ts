@@ -11,17 +11,17 @@ import {
   Logger,
 } from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
+import { AuthGuard } from '@nestjs/passport';
 
+import { GetUser } from 'src/auth/domain/get-user.decorator';
+import { User } from 'src/auth/domain/user.entity';
 import { TasksService } from '../application/tasks.service';
 import { Task } from '../domain/task.entity';
 import { CreateTaskDto } from '../domain/dto/create-task.dto';
 import { GetTasksFilterDto } from '../domain/dto/get-tasks-filter.dto';
 import { UpdateTaskDto } from '../domain/dto/update-task.dto';
 import { UpdateTaskStatusDto } from '../domain/dto/update-task-status.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'src/auth/domain/get-user.decorator';
-import { User } from 'src/auth/domain/user.entity';
-import { ConfigService } from '@nestjs/config';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())
