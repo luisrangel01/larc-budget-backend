@@ -1,4 +1,4 @@
 export class UpdateAccountDto {
-  title: string;
-  description: string;
+  name: string;
+  currency: string;
 }

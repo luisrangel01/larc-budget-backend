@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Task } from 'src/tasks/domain/task.entity';
+import { Account } from 'src/accounts/domain/account.entity';
 import { UserStatus } from './user.enums';
 
 @Entity()
@@ -19,4 +20,7 @@ export class User {
 
   @OneToMany((_type) => Task, (task) => task.user, { eager: false })
   tasks: Task[];
+
+  @OneToMany((_type) => Account, (account) => account.user, { eager: false })
+  accounts: Account[];
 }

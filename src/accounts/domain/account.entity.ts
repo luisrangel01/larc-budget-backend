@@ -10,15 +10,15 @@ export class Account {
   id: string;
 
   @Column()
-  title: string;
+  name: string;
 
   @Column()
-  description: string;
+  currency: string;
 
   @Column()
   status: AccountStatus;
 
-  @ManyToOne((_type) => User, (user) => user.tasks, { eager: false })
+  @ManyToOne((_type) => User, (user) => user.accounts, { eager: false })
   @Exclude({ toPlainOnly: true })
   user: User;
 }

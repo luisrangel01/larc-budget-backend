@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
@@ -19,8 +20,10 @@ import { CreateAccountDto } from '../domain/dto/create-account.dto';
 import { GetAccountsFilterDto } from '../domain/dto/get-accounts-filter.dto';
 import { UpdateAccountDto } from '../domain/dto/update-account.dto';
 import { UpdateAccountStatusDto } from '../domain/dto/update-account-status.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('accounts')
+@UseGuards(AuthGuard())
 export class AccountsController {
   private logger = new Logger('AccountsController');
 

@@ -2,9 +2,9 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateAccountDto {
   @IsNotEmpty()
-  title: string;
+  name: string;
 
   @IsOptional()
   @IsNotEmpty()
-  description: string;
+  currency: string;
 }

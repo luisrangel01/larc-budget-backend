@@ -105,11 +105,11 @@ export class AccountsRepositoryService {
     user: User,
     createAccountDto: CreateAccountDto,
   ): Promise<Account> {
-    const { title, description } = createAccountDto;
+    const { name, currency } = createAccountDto;
 
     const account = this.dataSource.getRepository(Account).create({
-      title,
-      description,
+      name,
+      currency,
       status: AccountStatus.OPEN,
       user,
     });
@@ -124,14 +124,14 @@ export class AccountsRepositoryService {
     id: string,
     updateAccountDto: UpdateAccountDto,
   ): Promise<UpdateResult> {
-    const { title, description } = updateAccountDto;
+    const { name, currency } = updateAccountDto;
 
     const retult = await this.dataSource
       .createQueryBuilder()
       .update(Account)
       .set({
-        ...(title ? { title: title } : {}),
-        ...(description ? { description: description } : {}),
+        ...(name ? { name: name } : {}),
+        ...(currency ? { currency: currency } : {}),
       })
       .where('userId = :userId', { userId: user.id })
       .andWhere('id = :id', { id: id })
