@@ -105,12 +105,27 @@ export class AccountsRepositoryService {
     user: User,
     createAccountDto: CreateAccountDto,
   ): Promise<Account> {
-    const { name, currency } = createAccountDto;
+    const {
+      name,
+      type,
+      currency,
+      currentBalance,
+      color,
+      creditCardLimit,
+      cutOffDate,
+      paymentDate,
+    } = createAccountDto;
 
     const account = this.dataSource.getRepository(Account).create({
       name,
+      type,
       currency,
-      status: AccountStatus.OPEN,
+      currentBalance,
+      color,
+      creditCardLimit,
+      cutOffDate,
+      paymentDate,
+      status: AccountStatus.ACTIVE,
       user,
     });
 
@@ -124,14 +139,29 @@ export class AccountsRepositoryService {
     id: string,
     updateAccountDto: UpdateAccountDto,
   ): Promise<UpdateResult> {
-    const { name, currency } = updateAccountDto;
+    const {
+      name,
+      type,
+      currency,
+      currentBalance,
+      color,
+      creditCardLimit,
+      cutOffDate,
+      paymentDate,
+    } = updateAccountDto;
 
     const retult = await this.dataSource
       .createQueryBuilder()
       .update(Account)
       .set({
         ...(name ? { name: name } : {}),
+        ...(type ? { type: type } : {}),
         ...(currency ? { currency: currency } : {}),
+        ...(currentBalance ? { currentBalance: currentBalance } : {}),
+        ...(color ? { color: color } : {}),
+        ...(creditCardLimit ? { creditCardLimit: creditCardLimit } : {}),
+        ...(cutOffDate ? { cutOffDate: cutOffDate } : {}),
+        ...(paymentDate ? { paymentDate: paymentDate } : {}),
       })
       .where('userId = :userId', { userId: user.id })
       .andWhere('id = :id', { id: id })
