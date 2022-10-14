@@ -7,6 +7,7 @@ import { AccountTransactionsRepositoryService } from '../domain/account-transact
 import { CreateAccountTransactionDto } from '../domain/dto/create-account-transaction.dto';
 import { UpdateAccountTransactionDto } from '../domain/dto/update-account-transaction.dto';
 import { GetAccountTransactionsFilterDto } from '../domain/dto/get-account-transactions-filter.dto';
+import { TransferDto } from '../domain/dto/transfer.dto';
 
 @Injectable()
 export class AccountTransactionsService {
@@ -81,5 +82,15 @@ export class AccountTransactionsService {
       throw new NotFoundException(`Transaction with ID "${id}" not found`);
     }
     return result;
+  }
+
+  transfer(
+    user: User,
+    transferDto: TransferDto,
+  ): Promise<AccountTransaction[]> {
+    return this.accountTransactionsRepositoryService.transfer(
+      user,
+      transferDto,
+    );
   }
 }

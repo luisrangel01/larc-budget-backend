@@ -20,6 +20,7 @@ import { AccountTransaction } from '../domain/account-transaction.entity';
 import { CreateAccountTransactionDto } from '../domain/dto/create-account-transaction.dto';
 import { GetAccountTransactionsFilterDto } from '../domain/dto/get-account-transactions-filter.dto';
 import { UpdateAccountTransactionDto } from '../domain/dto/update-account-transaction.dto';
+import { TransferDto } from '../domain/dto/transfer.dto';
 
 @Controller('account-transactions')
 @UseGuards(AuthGuard())
@@ -70,5 +71,18 @@ export class AccountTransactionsController {
       user,
       createAccountTransactionDto,
     );
+  }
+
+  @Post('/transfer')
+  transfer(
+    @GetUser() user: User,
+    @Body() transferDto: TransferDto,
+  ): Promise<AccountTransaction[]> {
+    this.logger.verbose(
+      `User "${user.username}" creating a new transfer. Data: ${JSON.stringify(
+        transferDto,
+      )}`,
+    );
+    return this.accountTransactionsService.transfer(user, transferDto);
   }
 }

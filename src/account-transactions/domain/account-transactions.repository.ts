@@ -24,6 +24,7 @@ import { CreateAccountDto } from 'src/accounts/domain/dto/create-account.dto';
 import { Account } from 'src/accounts/domain/account.entity';
 import { AccountStatus } from 'src/accounts/domain/account.enums';
 import { UpdateAccountDto } from 'src/accounts/domain/dto/update-account.dto';
+import { TransferDto } from './dto/transfer.dto';
 
 @Injectable()
 export class AccountTransactionsRepositoryService {
@@ -277,5 +278,45 @@ export class AccountTransactionsRepositoryService {
       .execute();
 
     return retult;
+  }
+
+  async transfer(
+    user: User,
+    transferDto: TransferDto,
+  ): Promise<AccountTransaction[]> {
+    const { originAccountId, destinationAccountId, currency, amount, note } =
+      transferDto;
+    const originType: AccountTransactionType = AccountTransactionType.DEBIT;
+    const destinationType: AccountTransactionType =
+      AccountTransactionType.CREDIT;
+
+    const originCreateAccountTransactionDto: CreateAccountTransactionDto = {
+      accountId: originAccountId,
+      currency,
+      type: originType,
+      amount,
+      note: `${note} - TRANSFER - DEBIT`,
+    };
+
+    const originAccountTransaction = await this.createAccountTransaction(
+      user,
+      originCreateAccountTransactionDto,
+    );
+
+    const destinationCreateAccountTransactionDto: CreateAccountTransactionDto =
+      {
+        accountId: destinationAccountId,
+        currency,
+        type: destinationType,
+        amount,
+        note: `${note} - TRANSFER - CREDIT`,
+      };
+
+    const destinationAccountTransaction = await this.createAccountTransaction(
+      user,
+      destinationCreateAccountTransactionDto,
+    );
+
+    return [originAccountTransaction, destinationAccountTransaction];
   }
 }
