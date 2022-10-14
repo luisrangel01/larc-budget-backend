@@ -33,6 +33,7 @@ export class AccountTransactionsRepositoryService {
   }
 
   findOne(options: FindOneOptions<AccountTransaction>) {
+    console.log(options);
     return this.dataSource.getRepository(AccountTransaction).findOne(options);
   }
 
@@ -42,27 +43,26 @@ export class AccountTransactionsRepositoryService {
     accountId: string,
   ): Promise<AccountTransaction[]> {
     try {
-      const { status, search } = filterDto;
+      const { type, search } = filterDto;
 
-      if (!status && !search) {
+      if (!type && !search) {
         return this.dataSource
           .getRepository(AccountTransaction)
           .createQueryBuilder()
-          .where({ user })
           .where({ account: accountId })
           .getMany();
       }
 
       let accountTransactions: AccountTransaction[];
 
-      if (status && search) {
+      if (type && search) {
         accountTransactions = await this.dataSource
           .getRepository(AccountTransaction)
           .createQueryBuilder()
-          .where({ user })
-          .andWhere('status = :status', { status: status })
+          .where({ account: accountId })
+          .andWhere('type = :type', { type: type })
           .andWhere(
-            `(LOWER(title) LIKE LOWER(:search) OR LOWER(description) LIKE LOWER(:search))`,
+            `(LOWER(note) LIKE LOWER(:search) OR LOWER(note) LIKE LOWER(:search))`,
             {
               search: `%${search}%`,
             },
@@ -72,12 +72,12 @@ export class AccountTransactionsRepositoryService {
         return accountTransactions;
       }
 
-      if (status) {
+      if (type) {
         accountTransactions = await this.dataSource
           .getRepository(AccountTransaction)
           .createQueryBuilder()
-          .where({ user })
-          .andWhere('status = :status', { status: status })
+          .where({ account: accountId })
+          .andWhere('type = :type', { type: type })
           .getMany();
       }
 
@@ -85,9 +85,9 @@ export class AccountTransactionsRepositoryService {
         accountTransactions = await this.dataSource
           .getRepository(AccountTransaction)
           .createQueryBuilder()
-          .where({ user })
+          .where({ account: accountId })
           .andWhere(
-            `(LOWER(title) LIKE LOWER(:search) OR LOWER(description) LIKE LOWER(:search))`,
+            `(LOWER(note) LIKE LOWER(:search) OR LOWER(note) LIKE LOWER(:search))`,
             {
               search: `%${search}%`,
             },

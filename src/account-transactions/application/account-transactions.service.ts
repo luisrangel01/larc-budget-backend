@@ -32,7 +32,7 @@ export class AccountTransactionsService {
     id: string,
   ): Promise<AccountTransaction> {
     const found = await this.accountTransactionsRepositoryService.findOne({
-      where: { id, user },
+      where: { id },
     });
     if (!found) {
       throw new NotFoundException(`Transaction with ID "${id}" not found`);

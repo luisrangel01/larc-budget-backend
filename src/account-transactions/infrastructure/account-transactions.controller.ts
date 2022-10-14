@@ -46,7 +46,7 @@ export class AccountTransactionsController {
     );
   }
 
-  @Get('/:id')
+  @Get('/transaction/:id')
   getAccountTransactionById(
     @GetUser() user: User,
     @Param('id') id: string,
@@ -70,36 +70,5 @@ export class AccountTransactionsController {
       user,
       createAccountTransactionDto,
     );
-  }
-
-  @Patch('/:id')
-  updateAccountTransaction(
-    @GetUser() user: User,
-    @Param('id') id: string,
-    @Body() updateAccountTransactionDto: UpdateAccountTransactionDto,
-  ): Promise<UpdateResult> {
-    this.logger.verbose(
-      `User "${
-        user.username
-      }" updating transaction. id: "${id}" Data: ${JSON.stringify(
-        updateAccountTransactionDto,
-      )}`,
-    );
-    return this.accountTransactionsService.updateAccountTransaction(
-      user,
-      id,
-      updateAccountTransactionDto,
-    );
-  }
-
-  @Delete('/:id')
-  deleteAccountTransaction(
-    @GetUser() user: User,
-    @Param('id') id: string,
-  ): Promise<DeleteResult> {
-    this.logger.verbose(
-      `User "${user.username}" deleting transaction. id: "${id}"`,
-    );
-    return this.accountTransactionsService.deleteAccountTransaction(user, id);
   }
 }
