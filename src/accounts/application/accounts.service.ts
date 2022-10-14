@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 
+import { AccountTransactionsRepositoryService } from 'src/account-transactions/domain/account-transactions.repository';
 import { User } from 'src/auth/domain/user.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { Account } from '../domain/account.entity';
@@ -16,6 +17,7 @@ export class AccountsService {
   constructor(
     @Inject(AccountsRepositoryService)
     private readonly accountsRepositoryService: AccountsRepositoryService,
+    private readonly accountTransactionsRepositoryService: AccountTransactionsRepositoryService,
   ) {}
 
   getAccounts(user: User, filterDto: GetAccountsFilterDto): Promise<Account[]> {
@@ -23,7 +25,7 @@ export class AccountsService {
   }
 
   async getAccountById(user: User, id: string): Promise<Account> {
-    const found = await this.accountsRepositoryService.getAccount({
+    const found = await this.accountTransactionsRepositoryService.getAccount({
       where: { id, user },
     });
     if (!found) {
@@ -37,7 +39,10 @@ export class AccountsService {
     user: User,
     createAccountDto: CreateAccountDto,
   ): Promise<Account> {
-    return this.accountsRepositoryService.createAccount(user, createAccountDto);
+    return this.accountTransactionsRepositoryService.createAccount(
+      user,
+      createAccountDto,
+    );
   }
 
   async updateAccount(
@@ -45,11 +50,12 @@ export class AccountsService {
     id: string,
     updateAccountDto: UpdateAccountDto,
   ): Promise<UpdateResult> {
-    const result = await this.accountsRepositoryService.updateAccount(
-      user,
-      id,
-      updateAccountDto,
-    );
+    const result =
+      await this.accountTransactionsRepositoryService.updateAccount(
+        user,
+        id,
+        updateAccountDto,
+      );
     if (result.affected === 0) {
       throw new NotFoundException(`Account with ID "${id}" not found`);
     }

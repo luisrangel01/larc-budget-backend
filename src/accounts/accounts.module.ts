@@ -9,10 +9,15 @@ import { AccountsController } from './infrastructure/accounts.controller';
 import { AccountsService } from './application/accounts.service';
 import { AccountsRepositoryService } from './domain/accounts.repository';
 import { Account } from './domain/account.entity';
+import { AccountTransactionsRepositoryService } from '../account-transactions/domain/account-transactions.repository';
 
 @Module({
   imports: [ConfigModule, TypeOrmModule.forFeature([Account]), AuthModule],
-  providers: [AccountsService, AccountsRepositoryService],
+  providers: [
+    AccountsService,
+    AccountsRepositoryService,
+    AccountTransactionsRepositoryService,
+  ],
   controllers: [AccountsController],
 })
 export class AccountsModule {}

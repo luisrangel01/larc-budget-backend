@@ -12,21 +12,24 @@ import {
 } from 'typeorm';
 
 import { AccountTransaction } from './account-transaction.entity';
-import { AccountTransactionStatus } from './account-transactions.enums';
+import {
+  AccountTransactionStatus,
+  AccountTransactionType,
+} from './account-transactions.enums';
 import { CreateAccountTransactionDto } from './dto/create-account-transaction.dto';
 import { UpdateAccountTransactionDto } from './dto/update-account-transaction.dto';
 import { GetAccountTransactionsFilterDto } from './dto/get-account-transactions-filter.dto';
 import { User } from 'src/auth/domain/user.entity';
-import { AccountsRepositoryService } from 'src/accounts/domain/accounts.repository';
+import { CreateAccountDto } from 'src/accounts/domain/dto/create-account.dto';
+import { Account } from 'src/accounts/domain/account.entity';
+import { AccountStatus } from 'src/accounts/domain/account.enums';
+import { UpdateAccountDto } from 'src/accounts/domain/dto/update-account.dto';
 
 @Injectable()
 export class AccountTransactionsRepositoryService {
   private logger = new Logger('AccountTransactionsRepositoryService');
 
-  constructor(
-    private dataSource: DataSource,
-    private accountsRepositoryService: AccountsRepositoryService,
-  ) {}
+  constructor(private dataSource: DataSource) {}
 
   public get repository(): Repository<AccountTransaction> {
     return this.dataSource.getRepository(AccountTransaction);
@@ -113,7 +116,7 @@ export class AccountTransactionsRepositoryService {
   ): Promise<AccountTransaction> {
     const { accountId, currency, type, amount, note } =
       createAccountTransactionDto;
-    const account = await this.accountsRepositoryService.getAccount({
+    const account = await this.getAccount({
       where: { id: accountId },
     });
 
@@ -142,7 +145,7 @@ export class AccountTransactionsRepositoryService {
       .getRepository(AccountTransaction)
       .save(accountTransaction);
 
-    await this.accountsRepositoryService.updateAccount(user, account.id, {
+    await this.updateAccount(user, account.id, {
       currentBalance: currentBalance,
       name: null,
       type: null,
@@ -186,5 +189,93 @@ export class AccountTransactionsRepositoryService {
       .getRepository(AccountTransaction)
       .delete({ id, user });
     return result;
+  }
+
+  async createAccount(
+    user: User,
+    createAccountDto: CreateAccountDto,
+  ): Promise<Account> {
+    const {
+      name,
+      type,
+      currency,
+      currentBalance,
+      color,
+      creditCardLimit,
+      cutOffDate,
+      paymentDate,
+    } = createAccountDto;
+
+    const account = this.dataSource.getRepository(Account).create({
+      name,
+      type,
+      currency,
+      currentBalance: 0,
+      color,
+      creditCardLimit,
+      cutOffDate,
+      paymentDate,
+      status: AccountStatus.ACTIVE,
+      user,
+    });
+
+    await this.dataSource.getRepository(Account).save(account);
+
+    if (currentBalance > 0) {
+      const type: AccountTransactionType = AccountTransactionType.CREDIT;
+
+      const createAccountTransactionDto: CreateAccountTransactionDto = {
+        accountId: account.id,
+        currency,
+        type,
+        amount: currentBalance,
+        note: 'ACCOUNT OPENING',
+      };
+
+      await this.createAccountTransaction(user, createAccountTransactionDto);
+    }
+
+    return account;
+  }
+
+  getAccount(options: FindOneOptions<Account>) {
+    return this.dataSource.getRepository(Account).findOne(options);
+  }
+
+  async updateAccount(
+    user: User,
+    id: string,
+    updateAccountDto: UpdateAccountDto,
+  ): Promise<UpdateResult> {
+    const {
+      name,
+      type,
+      currency,
+      currentBalance,
+      color,
+      creditCardLimit,
+      cutOffDate,
+      paymentDate,
+    } = updateAccountDto;
+
+    const retult = await this.dataSource
+      .createQueryBuilder()
+      .update(Account)
+      .set({
+        ...(name ? { name: name } : {}),
+        ...(type ? { type: type } : {}),
+        ...(currency ? { currency: currency } : {}),
+        ...(currentBalance ? { currentBalance: currentBalance } : {}),
+        ...(color ? { color: color } : {}),
+        ...(creditCardLimit ? { creditCardLimit: creditCardLimit } : {}),
+        ...(cutOffDate ? { cutOffDate: cutOffDate } : {}),
+        ...(paymentDate ? { paymentDate: paymentDate } : {}),
+        updatedAt: new Date(),
+      })
+      .where('userId = :userId', { userId: user.id })
+      .andWhere('id = :id', { id: id })
+      .execute();
+
+    return retult;
   }
 }

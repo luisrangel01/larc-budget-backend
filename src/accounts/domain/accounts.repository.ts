@@ -3,19 +3,11 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import {
-  DataSource,
-  DeleteResult,
-  FindOneOptions,
-  Repository,
-  UpdateResult,
-} from 'typeorm';
+import { DataSource, DeleteResult, Repository } from 'typeorm';
 
+import { AccountTransactionsRepositoryService } from 'src/account-transactions/domain/account-transactions.repository';
 import { User } from 'src/auth/domain/user.entity';
 import { Account } from './account.entity';
-import { AccountStatus } from './account.enums';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { UpdateAccountDto } from './dto/update-account.dto';
 import { GetAccountsFilterDto } from './dto/get-accounts-filter.dto';
 
 @Injectable()
@@ -26,10 +18,6 @@ export class AccountsRepositoryService {
 
   public get repository(): Repository<Account> {
     return this.dataSource.getRepository(Account);
-  }
-
-  getAccount(options: FindOneOptions<Account>) {
-    return this.dataSource.getRepository(Account).findOne(options);
   }
 
   async getAccounts(
@@ -99,76 +87,6 @@ export class AccountsRepositoryService {
       );
       throw new InternalServerErrorException();
     }
-  }
-
-  async createAccount(
-    user: User,
-    createAccountDto: CreateAccountDto,
-  ): Promise<Account> {
-    const {
-      name,
-      type,
-      currency,
-      currentBalance,
-      color,
-      creditCardLimit,
-      cutOffDate,
-      paymentDate,
-    } = createAccountDto;
-
-    const account = this.dataSource.getRepository(Account).create({
-      name,
-      type,
-      currency,
-      currentBalance,
-      color,
-      creditCardLimit,
-      cutOffDate,
-      paymentDate,
-      status: AccountStatus.ACTIVE,
-      user,
-    });
-
-    await this.dataSource.getRepository(Account).save(account);
-
-    return account;
-  }
-
-  async updateAccount(
-    user: User,
-    id: string,
-    updateAccountDto: UpdateAccountDto,
-  ): Promise<UpdateResult> {
-    const {
-      name,
-      type,
-      currency,
-      currentBalance,
-      color,
-      creditCardLimit,
-      cutOffDate,
-      paymentDate,
-    } = updateAccountDto;
-
-    const retult = await this.dataSource
-      .createQueryBuilder()
-      .update(Account)
-      .set({
-        ...(name ? { name: name } : {}),
-        ...(type ? { type: type } : {}),
-        ...(currency ? { currency: currency } : {}),
-        ...(currentBalance ? { currentBalance: currentBalance } : {}),
-        ...(color ? { color: color } : {}),
-        ...(creditCardLimit ? { creditCardLimit: creditCardLimit } : {}),
-        ...(cutOffDate ? { cutOffDate: cutOffDate } : {}),
-        ...(paymentDate ? { paymentDate: paymentDate } : {}),
-        updatedAt: new Date(),
-      })
-      .where('userId = :userId', { userId: user.id })
-      .andWhere('id = :id', { id: id })
-      .execute();
-
-    return retult;
   }
 
   async deleteAccount(user: User, id: string): Promise<DeleteResult> {

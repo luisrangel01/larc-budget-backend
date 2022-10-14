@@ -7,7 +7,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from 'src/auth/auth.module';
 import { AccountTransactionsController } from './infrastructure/account-transactions.controller';
 import { AccountTransactionsService } from './application/account-transactions.service';
-import { AccountsRepositoryService } from '../accounts/domain/accounts.repository';
 import { AccountTransactionsRepositoryService } from './domain/account-transactions.repository';
 import { AccountTransaction } from './domain/account-transaction.entity';
 
@@ -17,11 +16,7 @@ import { AccountTransaction } from './domain/account-transaction.entity';
     TypeOrmModule.forFeature([AccountTransaction]),
     AuthModule,
   ],
-  providers: [
-    AccountTransactionsService,
-    AccountTransactionsRepositoryService,
-    AccountsRepositoryService,
-  ],
+  providers: [AccountTransactionsService, AccountTransactionsRepositoryService],
   controllers: [AccountTransactionsController],
 })
 export class AccountTransactionsModule {}
