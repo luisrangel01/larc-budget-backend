@@ -57,7 +57,7 @@ export class Account {
   @OneToMany(
     (_type) => AccountTransaction,
     (accountTransaction) => accountTransaction.account,
-    { eager: false },
+    // { eager: true },
   )
   accountTransactions: AccountTransaction[];
 }

@@ -37,9 +37,15 @@ export class AccountTransaction {
   @Column()
   status: AccountTransactionStatus;
 
+  @Column()
+  isReversion: boolean;
+
   @ManyToOne((_type) => User, (user) => user.tasks, { eager: false })
   @Exclude({ toPlainOnly: true })
   user: User;
+
+  // @ManyToOne(() => Account, (account) => account.accountTransactions)
+  // account: Account;
 
   @ManyToOne((_type) => Account, (account) => account.accountTransactions, {
     eager: false,

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 
 import { AccountTransactionType } from '../account-transactions.enums';
 
@@ -18,4 +18,8 @@ export class CreateAccountTransactionDto {
   @IsOptional()
   @IsNotEmpty()
   note: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isReversion: boolean;
 }

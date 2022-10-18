@@ -8,6 +8,8 @@ import { CreateAccountTransactionDto } from '../domain/dto/create-account-transa
 import { UpdateAccountTransactionDto } from '../domain/dto/update-account-transaction.dto';
 import { GetAccountTransactionsFilterDto } from '../domain/dto/get-account-transactions-filter.dto';
 import { TransferDto } from '../domain/dto/transfer.dto';
+import { UpdateAccountTransactionStatusDto } from '../domain/dto/update-account-transaction-status.dto';
+import { ResultUpdate } from '../domain/account-transaction.interface';
 
 @Injectable()
 export class AccountTransactionsService {
@@ -92,5 +94,27 @@ export class AccountTransactionsService {
       user,
       transferDto,
     );
+  }
+
+  async updateAccountTransactionStatus(
+    user: User,
+    id: string,
+    updateAccountTransactionStatusDto: UpdateAccountTransactionStatusDto,
+  ): Promise<ResultUpdate> {
+    const result =
+      await this.accountTransactionsRepositoryService.updateAccountTransactionStatus(
+        user,
+        id,
+        updateAccountTransactionStatusDto,
+      );
+
+    if (!result.transaction) {
+      throw new NotFoundException(`Transaction with ID "${id}" not found`);
+    }
+
+    if (result.updateResult.affected === 0) {
+      throw new NotFoundException(`Transaction with ID "${id}" not updated`);
+    }
+    return result;
   }
 }

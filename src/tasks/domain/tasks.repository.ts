@@ -120,7 +120,7 @@ export class TasksRepositoryService {
   ): Promise<UpdateResult> {
     const { title, description } = updateTaskDto;
 
-    const retult = await this.dataSource
+    const result = await this.dataSource
       .createQueryBuilder()
       .update(Task)
       .set({
@@ -131,7 +131,7 @@ export class TasksRepositoryService {
       .andWhere('id = :id', { id: id })
       .execute();
 
-    return retult;
+    return result;
   }
 
   async deleteTask(user: User, id: string): Promise<DeleteResult> {

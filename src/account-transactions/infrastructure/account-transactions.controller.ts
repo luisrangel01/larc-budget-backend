@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -10,7 +9,6 @@ import {
   UseGuards,
   Logger,
 } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
 
 import { GetUser } from 'src/auth/domain/get-user.decorator';
@@ -19,8 +17,9 @@ import { AccountTransactionsService } from '../application/account-transactions.
 import { AccountTransaction } from '../domain/account-transaction.entity';
 import { CreateAccountTransactionDto } from '../domain/dto/create-account-transaction.dto';
 import { GetAccountTransactionsFilterDto } from '../domain/dto/get-account-transactions-filter.dto';
-import { UpdateAccountTransactionDto } from '../domain/dto/update-account-transaction.dto';
 import { TransferDto } from '../domain/dto/transfer.dto';
+import { UpdateAccountTransactionStatusDto } from '../domain/dto/update-account-transaction-status.dto';
+import { ResultUpdate } from '../domain/account-transaction.interface';
 
 @Controller('account-transactions')
 @UseGuards(AuthGuard())
@@ -84,5 +83,26 @@ export class AccountTransactionsController {
       )}`,
     );
     return this.accountTransactionsService.transfer(user, transferDto);
+  }
+
+  @Patch('/:id/status')
+  updateTaskStatus(
+    @GetUser() user: User,
+    @Param('id') id: string,
+    @Body()
+    updateAccountTransactionStatusDto: UpdateAccountTransactionStatusDto,
+  ): Promise<ResultUpdate> {
+    this.logger.verbose(
+      `User "${
+        user.username
+      }" updating status transaction. id: "${id}" Data: ${JSON.stringify(
+        updateAccountTransactionStatusDto,
+      )}`,
+    );
+    return this.accountTransactionsService.updateAccountTransactionStatus(
+      user,
+      id,
+      updateAccountTransactionStatusDto,
+    );
   }
 }

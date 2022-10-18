@@ -25,6 +25,8 @@ import { Account } from 'src/accounts/domain/account.entity';
 import { AccountStatus } from 'src/accounts/domain/account.enums';
 import { UpdateAccountDto } from 'src/accounts/domain/dto/update-account.dto';
 import { TransferDto } from './dto/transfer.dto';
+import { UpdateAccountTransactionStatusDto } from './dto/update-account-transaction-status.dto';
+import { ResultUpdate } from './account-transaction.interface';
 
 @Injectable()
 export class AccountTransactionsRepositoryService {
@@ -115,7 +117,7 @@ export class AccountTransactionsRepositoryService {
     user: User,
     createAccountTransactionDto: CreateAccountTransactionDto,
   ): Promise<AccountTransaction> {
-    const { accountId, currency, type, amount, note } =
+    const { accountId, currency, type, amount, note, isReversion } =
       createAccountTransactionDto;
     const account = await this.getAccount({
       where: { id: accountId },
@@ -139,6 +141,7 @@ export class AccountTransactionsRepositoryService {
         currentBalance,
         note,
         status: AccountTransactionStatus.ACTIVE,
+        isReversion: isReversion ? isReversion : false,
         user,
       });
 
@@ -167,7 +170,7 @@ export class AccountTransactionsRepositoryService {
   ): Promise<UpdateResult> {
     const { currency, note } = updateAccountTransactionDto;
 
-    const retult = await this.dataSource
+    const result = await this.dataSource
       .createQueryBuilder()
       .update(AccountTransaction)
       .set({
@@ -179,7 +182,7 @@ export class AccountTransactionsRepositoryService {
       .andWhere('id = :id', { id: id })
       .execute();
 
-    return retult;
+    return result;
   }
 
   async deleteAccountTransaction(
@@ -231,6 +234,7 @@ export class AccountTransactionsRepositoryService {
         type,
         amount: currentBalance,
         note: 'ACCOUNT OPENING',
+        isReversion: false,
       };
 
       await this.createAccountTransaction(user, createAccountTransactionDto);
@@ -259,7 +263,7 @@ export class AccountTransactionsRepositoryService {
       paymentDate,
     } = updateAccountDto;
 
-    const retult = await this.dataSource
+    const result = await this.dataSource
       .createQueryBuilder()
       .update(Account)
       .set({
@@ -277,7 +281,7 @@ export class AccountTransactionsRepositoryService {
       .andWhere('id = :id', { id: id })
       .execute();
 
-    return retult;
+    return result;
   }
 
   async transfer(
@@ -296,6 +300,7 @@ export class AccountTransactionsRepositoryService {
       type: originType,
       amount,
       note: `${note} - TRANSFER - DEBIT`,
+      isReversion: false,
     };
 
     const originAccountTransaction = await this.createAccountTransaction(
@@ -310,6 +315,7 @@ export class AccountTransactionsRepositoryService {
         type: destinationType,
         amount,
         note: `${note} - TRANSFER - CREDIT`,
+        isReversion: false,
       };
 
     const destinationAccountTransaction = await this.createAccountTransaction(
@@ -318,5 +324,58 @@ export class AccountTransactionsRepositoryService {
     );
 
     return [originAccountTransaction, destinationAccountTransaction];
+  }
+
+  async updateAccountTransactionStatus(
+    user: User,
+    id: string,
+    updateAccountTransactionStatusDto: UpdateAccountTransactionStatusDto,
+  ): Promise<ResultUpdate> {
+    const transaction = await this.findOne({
+      where: { id, status: AccountTransactionStatus.ACTIVE },
+      relations: { account: true },
+    });
+
+    if (!transaction) {
+      return { transaction };
+    }
+
+    const { status } = updateAccountTransactionStatusDto;
+
+    const result = await this.dataSource
+      .createQueryBuilder()
+      .update(AccountTransaction)
+      .set({
+        ...(status ? { status: status } : {}),
+        updatedAt: new Date(),
+      })
+      .where('userId = :userId', { userId: user.id })
+      .andWhere('id = :id', { id: id })
+      .execute();
+
+    const revertType: AccountTransactionType =
+      transaction.type === AccountTransactionType.CREDIT
+        ? AccountTransactionType.DEBIT
+        : AccountTransactionType.CREDIT;
+
+    const revertCreateAccountTransactionDto: CreateAccountTransactionDto = {
+      accountId: transaction.account.id,
+      currency: transaction.currency,
+      type: revertType,
+      amount: transaction.amount,
+      note: `${transaction.note} - REVERT`,
+      isReversion: true,
+    };
+
+    const revertAccountTransaction = await this.createAccountTransaction(
+      user,
+      revertCreateAccountTransactionDto,
+    );
+
+    return {
+      transaction,
+      updateResult: result,
+      revertAccountTransaction,
+    };
   }
 }
