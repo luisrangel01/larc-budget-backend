@@ -31,7 +31,6 @@ export class AuthService {
       const accessToken = await this.jwtService.sign(payload);
 
       return { accessToken };
-      // return 'success';
     } else {
       throw new UnauthorizedException('Please check upir login credentials');
     }

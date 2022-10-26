@@ -37,9 +37,13 @@ $ npm install
 ```bash
 # development
 $ npm run start
+# or
+$ yarn start
 
 # watch mode
 $ npm run start:dev
+# or
+$ yarn start:dev
 
 # production mode
 $ npm run start:prod
