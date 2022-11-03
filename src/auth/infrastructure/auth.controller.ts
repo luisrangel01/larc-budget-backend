@@ -30,6 +30,12 @@ export class AuthController {
   @Post('/test')
   @UseGuards(AuthGuard())
   test(@Req() req) {
-    console.log(req);
+    console.log(`req.headers:`, req.headers);
+    console.log(`req.user:`, req.user);
+    const user = { ...req.user };
+    if (user.password) {
+      delete user.password;
+    }
+    return user;
   }
 }

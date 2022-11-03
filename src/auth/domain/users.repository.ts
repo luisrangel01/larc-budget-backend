@@ -53,6 +53,10 @@ export class UsersRepositoryService {
       }
     }
 
+    if (user.password) {
+      delete user.password;
+    }
+
     return user;
   }
 }
