@@ -2,7 +2,10 @@ import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { AuthService } from '../application/auth.service';
-import { AuthCredentialsDto } from '../domain/dto/auth-credentials.dto';
+import {
+  AuthCredentialsSignUpDto,
+  AuthCredentialsSignInDto,
+} from '../domain/dto/auth-credentials.dto';
 import { ISignIn } from '../domain/sign-in.interface';
 import { User } from '../domain/user.entity';
 
@@ -10,14 +13,18 @@ import { User } from '../domain/user.entity';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('/signup')
-  signUp(@Body() authCredentialsDto: AuthCredentialsDto): Promise<User> {
-    return this.authService.signUp(authCredentialsDto);
+  @Post('/sign-up')
+  signUp(
+    @Body() authCredentialsSignUpDto: AuthCredentialsSignUpDto,
+  ): Promise<User> {
+    return this.authService.signUp(authCredentialsSignUpDto);
   }
 
-  @Post('/signin')
-  signIn(@Body() authCredentialsDto: AuthCredentialsDto): Promise<ISignIn> {
-    return this.authService.signIn(authCredentialsDto);
+  @Post('/sign-in')
+  signIn(
+    @Body() authCredentialsSignInDto: AuthCredentialsSignInDto,
+  ): Promise<ISignIn> {
+    return this.authService.signIn(authCredentialsSignInDto);
   }
 
   @Post('/test')

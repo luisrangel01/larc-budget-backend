@@ -14,7 +14,7 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from './user.entity';
 import { UserStatus } from './user.enums';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { AuthCredentialsSignUpDto } from './dto/auth-credentials.dto';
 
 @Injectable()
 export class UsersRepositoryService {
@@ -28,8 +28,8 @@ export class UsersRepositoryService {
     return this.dataSource.getRepository(User).findOne(options);
   }
 
-  async createUser(createUserDto: AuthCredentialsDto): Promise<User> {
-    const { username, password } = createUserDto;
+  async createUser(createUserDto: AuthCredentialsSignUpDto): Promise<User> {
+    const { username, password, name } = createUserDto;
 
     // hash
     const salt = await bcrypt.genSalt();
@@ -38,6 +38,7 @@ export class UsersRepositoryService {
     const user = this.dataSource.getRepository(User).create({
       username,
       password: hashedPassword,
+      name,
       status: UserStatus.ACTIVE,
     });
 

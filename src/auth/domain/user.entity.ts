@@ -17,6 +17,9 @@ export class User {
   password: string;
 
   @Column()
+  name: string;
+
+  @Column()
   status: UserStatus;
 
   @OneToMany((_type) => Task, (task) => task.user, { eager: false })
