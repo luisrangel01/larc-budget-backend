@@ -32,6 +32,7 @@ export class AccountsRepositoryService {
           .getRepository(Account)
           .createQueryBuilder()
           .where({ user })
+          .andWhere('status = :status', { status: 'ACTIVE' })
           .getMany();
       }
 
@@ -74,6 +75,7 @@ export class AccountsRepositoryService {
               search: `%${search}%`,
             },
           )
+          .andWhere('status = :status', { status: 'ACTIVE' })
           .getMany();
       }
 
