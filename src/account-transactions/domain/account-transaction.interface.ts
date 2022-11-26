@@ -6,3 +6,8 @@ export interface ResultUpdate {
   updateResult?: UpdateResult;
   revertAccountTransaction?: AccountTransaction;
 }
+
+export interface ResultTransfer {
+  originAccountTransaction?: AccountTransaction;
+  destinationAccountTransaction?: AccountTransaction;
+}

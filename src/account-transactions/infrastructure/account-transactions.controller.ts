@@ -19,7 +19,10 @@ import { CreateAccountTransactionDto } from '../domain/dto/create-account-transa
 import { GetAccountTransactionsFilterDto } from '../domain/dto/get-account-transactions-filter.dto';
 import { TransferDto } from '../domain/dto/transfer.dto';
 import { UpdateAccountTransactionStatusDto } from '../domain/dto/update-account-transaction-status.dto';
-import { ResultUpdate } from '../domain/account-transaction.interface';
+import {
+  ResultTransfer,
+  ResultUpdate,
+} from '../domain/account-transaction.interface';
 
 @Controller('account-transactions')
 @UseGuards(AuthGuard())
@@ -76,7 +79,7 @@ export class AccountTransactionsController {
   transfer(
     @GetUser() user: User,
     @Body() transferDto: TransferDto,
-  ): Promise<AccountTransaction[]> {
+  ): Promise<ResultTransfer> {
     this.logger.verbose(
       `User "${user.username}" creating a new transfer. Data: ${JSON.stringify(
         transferDto,

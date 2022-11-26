@@ -9,7 +9,10 @@ import { UpdateAccountTransactionDto } from '../domain/dto/update-account-transa
 import { GetAccountTransactionsFilterDto } from '../domain/dto/get-account-transactions-filter.dto';
 import { TransferDto } from '../domain/dto/transfer.dto';
 import { UpdateAccountTransactionStatusDto } from '../domain/dto/update-account-transaction-status.dto';
-import { ResultUpdate } from '../domain/account-transaction.interface';
+import {
+  ResultTransfer,
+  ResultUpdate,
+} from '../domain/account-transaction.interface';
 
 @Injectable()
 export class AccountTransactionsService {
@@ -86,10 +89,7 @@ export class AccountTransactionsService {
     return result;
   }
 
-  transfer(
-    user: User,
-    transferDto: TransferDto,
-  ): Promise<AccountTransaction[]> {
+  transfer(user: User, transferDto: TransferDto): Promise<ResultTransfer> {
     return this.accountTransactionsRepositoryService.transfer(
       user,
       transferDto,

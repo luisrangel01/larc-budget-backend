@@ -26,7 +26,7 @@ import { AccountStatus } from 'src/accounts/domain/account.enums';
 import { UpdateAccountDto } from 'src/accounts/domain/dto/update-account.dto';
 import { TransferDto } from './dto/transfer.dto';
 import { UpdateAccountTransactionStatusDto } from './dto/update-account-transaction-status.dto';
-import { ResultUpdate } from './account-transaction.interface';
+import { ResultTransfer, ResultUpdate } from './account-transaction.interface';
 
 @Injectable()
 export class AccountTransactionsRepositoryService {
@@ -287,7 +287,7 @@ export class AccountTransactionsRepositoryService {
   async transfer(
     user: User,
     transferDto: TransferDto,
-  ): Promise<AccountTransaction[]> {
+  ): Promise<ResultTransfer> {
     const { originAccountId, destinationAccountId, currency, amount, note } =
       transferDto;
     const originType: AccountTransactionType = AccountTransactionType.DEBIT;
@@ -323,7 +323,7 @@ export class AccountTransactionsRepositoryService {
       destinationCreateAccountTransactionDto,
     );
 
-    return [originAccountTransaction, destinationAccountTransaction];
+    return { originAccountTransaction, destinationAccountTransaction };
   }
 
   async updateAccountTransactionStatus(
