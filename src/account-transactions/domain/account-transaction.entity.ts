@@ -35,9 +35,9 @@ export class AccountTransaction {
   updatedAt: Date;
 
   @Column()
-  status: AccountTransactionStatus;
+  status: AccountTransactionStatus | string;
 
-  @Column()
+  @Column('boolean', { default: false })
   isReversion: boolean;
 
   @ManyToOne((_type) => User, (user) => user.tasks, { eager: false })

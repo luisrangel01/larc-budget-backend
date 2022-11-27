@@ -39,7 +39,6 @@ export class AccountTransactionsRepositoryService {
   }
 
   findOne(options: FindOneOptions<AccountTransaction>) {
-    console.log(options);
     return this.dataSource.getRepository(AccountTransaction).findOne(options);
   }
 
@@ -56,6 +55,7 @@ export class AccountTransactionsRepositoryService {
           .getRepository(AccountTransaction)
           .createQueryBuilder()
           .where({ account: accountId })
+          .andWhere('status = :status', { status: 'ACTIVE' })
           .getMany();
       }
 
@@ -66,6 +66,7 @@ export class AccountTransactionsRepositoryService {
           .getRepository(AccountTransaction)
           .createQueryBuilder()
           .where({ account: accountId })
+          .andWhere('status = :status', { status: 'ACTIVE' })
           .andWhere('type = :type', { type: type })
           .andWhere(
             `(LOWER(note) LIKE LOWER(:search) OR LOWER(note) LIKE LOWER(:search))`,
@@ -83,6 +84,7 @@ export class AccountTransactionsRepositoryService {
           .getRepository(AccountTransaction)
           .createQueryBuilder()
           .where({ account: accountId })
+          .andWhere('status = :status', { status: 'ACTIVE' })
           .andWhere('type = :type', { type: type })
           .getMany();
       }
@@ -92,6 +94,7 @@ export class AccountTransactionsRepositoryService {
           .getRepository(AccountTransaction)
           .createQueryBuilder()
           .where({ account: accountId })
+          .andWhere('status = :status', { status: 'ACTIVE' })
           .andWhere(
             `(LOWER(note) LIKE LOWER(:search) OR LOWER(note) LIKE LOWER(:search))`,
             {
@@ -140,7 +143,9 @@ export class AccountTransactionsRepositoryService {
         amount,
         currentBalance,
         note,
-        status: AccountTransactionStatus.ACTIVE,
+        status: isReversion
+          ? AccountTransactionStatus.REVERSION
+          : AccountTransactionStatus.ACTIVE,
         isReversion: isReversion ? isReversion : false,
         user,
       });
