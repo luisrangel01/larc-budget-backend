@@ -41,7 +41,7 @@ export class AuthService {
 
       return { accessToken };
     } else {
-      throw new UnauthorizedException('Please check upir login credentials');
+      throw new UnauthorizedException('Please check your Sign In Credentials');
     }
   }
 }
