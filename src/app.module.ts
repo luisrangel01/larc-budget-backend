@@ -28,7 +28,8 @@ import { AccountTransactionsModule } from './account-transactions/account-transa
         return {
           ssl: isProduction,
           extra: {
-            ssl: isProduction ? { rejectUnauthorized: false } : null,
+            ssl: null,
+            // ssl: isProduction ? { rejectUnauthorized: false } : null,
           },
           type: 'postgres',
           autoLoadEntities: true,
