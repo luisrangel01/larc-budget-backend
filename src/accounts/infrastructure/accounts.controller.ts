@@ -36,7 +36,7 @@ export class AccountsController {
   ): Promise<Account[]> {
     this.logger.verbose(
       `User "${
-        user.username
+        user.username ?? ''
       }" retrieving all accounts. Filters: ${JSON.stringify(filterDto)}`,
     );
     return this.accountsService.getAccounts(user, filterDto);

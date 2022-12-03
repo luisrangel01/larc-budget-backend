@@ -17,7 +17,7 @@ import { AccountTransactionsModule } from './account-transactions/account-transa
   imports: [
     ConfigModule.forRoot({
       envFilePath: [`.env.stage.${process.env.STAGE}`],
-      validationSchema: configValidationSchema,
+      // validationSchema: configValidationSchema,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

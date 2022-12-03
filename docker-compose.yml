@@ -1,0 +1,21 @@
+version: '1'
+
+services:
+  backend:
+    container_name: nest-cloud-run-container
+    build:
+      dockerfile: ./Dockerfile
+    image: nest-cloud-run
+    restart: always
+    environment:
+      TEST_VALUE: helloworldfromdevJODER
+      PORT: 3002
+      DB_HOST: 192.168.86.122
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postres
+      DB_DATABASE: larc-budget-management
+      JWT_SECRET_EXPIRES_IN: 36000
+      JWT_SECRET: qqL0^kBBo6y%pfEBf9E*!DhtwV47UK
+    ports:
+      - 3002:3002
