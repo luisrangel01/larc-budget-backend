@@ -16,6 +16,6 @@ services:
       DB_PASSWORD: postres
       DB_DATABASE: larc-budget-management
       JWT_SECRET_EXPIRES_IN: 36000
-      JWT_SECRET: qqL0^kBBo6y%pfEBf9E*!DhtwV47UK
+      JWT_SECRET: DhtwV47UK
     ports:
       - 3002:3002

@@ -21,9 +21,9 @@ import { JwtStrategy } from './domain/jwt.strategy';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         return {
-          secret: configService.get('JWT_SECRET'),
+          secret: 'DhtwV47UK' ?? configService.get('JWT_SECRET'),
           signOptions: {
-            expiresIn: configService.get('JWT_SECRET_EXPIRES_IN'),
+            expiresIn: 36000 ?? configService.get('JWT_SECRET_EXPIRES_IN'),
           },
         };
       },

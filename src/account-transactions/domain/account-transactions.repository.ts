@@ -154,16 +154,7 @@ export class AccountTransactionsRepositoryService {
       .getRepository(AccountTransaction)
       .save(accountTransaction);
 
-    await this.updateAccount(user, account.id, {
-      currentBalance: currentBalance,
-      name: null,
-      type: null,
-      currency: null,
-      color: null,
-      creditCardLimit: null,
-      cutOffDate: null,
-      paymentDate: null,
-    });
+    await this.updateAccountCurrentBalance(user, account.id, currentBalance);
 
     return accountTransaction;
   }
@@ -280,6 +271,25 @@ export class AccountTransactionsRepositoryService {
         ...(creditCardLimit ? { creditCardLimit: creditCardLimit } : {}),
         ...(cutOffDate ? { cutOffDate: cutOffDate } : {}),
         ...(paymentDate ? { paymentDate: paymentDate } : {}),
+        updatedAt: new Date(),
+      })
+      .where('userId = :userId', { userId: user.id })
+      .andWhere('id = :id', { id: id })
+      .execute();
+
+    return result;
+  }
+
+  async updateAccountCurrentBalance(
+    user: User,
+    id: string,
+    currentBalance: number,
+  ): Promise<UpdateResult> {
+    const result = await this.dataSource
+      .createQueryBuilder()
+      .update(Account)
+      .set({
+        currentBalance: currentBalance,
         updatedAt: new Date(),
       })
       .where('userId = :userId', { userId: user.id })

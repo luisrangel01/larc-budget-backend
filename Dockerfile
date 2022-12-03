@@ -9,7 +9,7 @@ ENV TEST_VALUE=helloworldfromdevTATATA \
     DB_PASSWORD=postres \
     DB_DATABASE=larc-budget-management \
     JWT_SECRET_EXPIRES_IN=36000 \
-    JWT_SECRET=qqL0^kBBo6y%pfEBf9E*!DhtwV47UK
+    JWT_SECRET=DhtwV47UK
 
 # Create app directory
 WORKDIR /usr/src/app
